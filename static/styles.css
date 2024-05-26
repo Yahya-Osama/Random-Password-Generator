@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.password-generator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.password-generator form {
+    text-align: left;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.password-generator form label {
+    margin-bottom: 10px;
+    display: block;
+}
+
+.password-generator form input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.password-generator form button {
+    margin-top: 10px;
+}
+
+.password {
+    margin-top: 20px;
+    text-align: center;
+}
