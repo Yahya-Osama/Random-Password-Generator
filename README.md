@@ -30,7 +30,7 @@ pip install pytest
 2. Navigate to the project directory:
 
     ```bash
-    cd random-password-generator
+    cd Random-Password-Generator
     ```
 
 3. Install the required dependencies:
