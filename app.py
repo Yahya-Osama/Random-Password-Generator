@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import random
 import string
+import json
 
 app = Flask(__name__)
 
@@ -18,6 +19,17 @@ def generate_password(length, include_numbers, include_special_chars, include_up
 
 @app.route('/')
 def index():
+    # Read the current visit count from the JSON file
+    with open('visits.json', 'r') as file:
+        data = json.load(file)
+        current_visits = data['visits']
+    # Increment the visit count
+    current_visits += 1
+
+    # Write the updated visit count back to the JSON file
+    with open('visits.json', 'w') as file:
+        json.dump({"visits": current_visits}, file)
+    
     return render_template('index.html')
 
 @app.route('/genpassword', methods=['POST'])
@@ -30,6 +42,13 @@ def genpassword():
     generated_password = generate_password(passlen, includenumbers, includespecialchars, includeuppercaseletters)
 
     return render_template('index.html', generatedpassword=generated_password)
+@app.route('/visits')
+def visitors():
+    with open('visits.json', 'r') as file:
+        data = json.load(file)
+        current_visits = data['visits']
+    return f"Number of visits: {current_visits}"
+
 
 if __name__ == '__main__':
     app.run("0.0.0.0", port=5000)
