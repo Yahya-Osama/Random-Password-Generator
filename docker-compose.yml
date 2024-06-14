@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app1:
+    build: .
+    container_name: password_generator_1
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+
+  app2:
+    build: .
+    container_name: password_generator_2
+    volumes:
+      - .:/app
+    ports:
+      - "5001:5000"  # Changed the external port for app2
