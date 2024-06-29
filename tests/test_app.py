@@ -1,5 +1,20 @@
 #import pytest
-from app import generate_password
+#from app import generate_password
+#from app import generate_password
+#from .. import app
+import string
+def generate_password(length, include_numbers, include_special_chars, include_uppercase_letters):
+    characters = string.ascii_lowercase
+    if include_numbers:
+        characters += string.digits
+    if include_special_chars:
+        characters += string.punctuation
+    if include_uppercase_letters:
+        characters += string.ascii_uppercase
+
+    generated_password = ''.join(random.choice(characters) for _ in range(length))
+    return generated_password
+
 
 # Test case for generating password of specified length
 def test_generate_password_length():
