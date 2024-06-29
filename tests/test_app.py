@@ -2,6 +2,7 @@
 #from app import generate_password
 #from app import generate_password
 #from .. import app
+import random
 import string
 def generate_password(length, include_numbers, include_special_chars, include_uppercase_letters):
     characters = string.ascii_lowercase
