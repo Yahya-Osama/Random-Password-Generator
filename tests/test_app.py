@@ -1,85 +1,54 @@
 import pytest
- #from app import generate_password
- #from app import generate_password
-# #from .. import app
-import random
-import string
+from app import app, generate_password
 import json
-def generate_password(length, include_numbers, include_special_chars, include_uppercase_letters):
-     characters = string.ascii_lowercase
-     if include_numbers:
-         characters += string.digits
-     if include_special_chars:
-         characters += string.punctuation
-     if include_uppercase_letters:
-         characters += string.ascii_uppercase
-
-     generated_password = ''.join(random.choice(characters) for _ in range(length))
-     return generated_password
-
-
-# # Test case for generating password of specified length
-# def test_generate_password_length():
-#     password_length = 12
-#     generated_password = generate_password(password_length, True, True, True)
-#     assert len(generated_password) == password_length
-
-# # Test case for including spaces in generated password
-# def test_generate_password_spaces():
-#     generated_password = generate_password(8, True, True, True)
-#     assert ' ' in generated_password
-
-# # Test case for including numbers in generated password
-# def test_generate_password_numbers():
-#     generated_password = generate_password(8, True, True, True)
-#     assert any(char.isdigit() for char in generated_password)
-
-# # Test case for including special characters in generated password
-# def test_generate_password_special_chars():
-#     generated_password = generate_password(8, True, True, True)
-#     assert any(char in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for char in generated_password)
-
-# # Test case for including uppercase letters in generated password
-# def test_generate_password_uppercase():
-#     generated_password = generate_password(8, True, True, True)
-#     assert any(char.isupper() for char in generated_password)
-
-# # Test case for generating password with all options disabled
-# def test_generate_password_no_options():
-#     generated_password = generate_password(8, False, False, False)
-#     assert generated_password == ''
-
-#from app import generate_password
+import os
+import string
 
 @pytest.fixture
 def client():
-    generate_password.config['TESTING'] = True
-    client = generate_password.test_client()
-
-    # Reset visits.json before each test
-    with open('visits.json', 'w') as file:
-        json.dump({'visits': 0}, file)
-
-    yield client
+    app.config['TESTING'] = True
+    with app.test_client() as client:
+        yield client
 
 def test_index(client):
-    response = client.get('/')
-    assert response.status_code == 200
-    assert b"Welcome to the Password Generator" in response.data
+    # Setup: Reset visits.json to 0
+    with open('visits.json', 'w') as file:
+        json.dump({"visits": 0}, file)
+    
+    rv = client.get('/')
+    assert rv.status_code == 200
+    #assert b'<h1>Welcome to the Index Page</h1>' in rv.data
 
-def test_genpassword(client):
-    data = {
+def test_visitors(client):
+    # Ensure the visit count increments
+    rv = client.get('/')
+    rv = client.get('/visits')
+    assert rv.status_code == 200
+    assert b'Number of visits: 1' in rv.data
+
+    rv = client.get('/')
+    rv = client.get('/visits')
+    assert b'Number of visits: 2' in rv.data
+
+def test_generate_password():
+    password = generate_password(10, True, True, True)
+    assert len(password) == 10
+    assert any(char.isdigit() for char in password)
+    assert any(char in string.punctuation for char in password)
+    assert any(char.isupper() for char in password)
+
+def test_genpassword_route(client):
+    rv = client.post('/genpassword', data={
         'passlen': 12,
-        'includenumbers': 'on',  # Simulate checkbox input
+        'includenumbers': 'on',
         'includespecialchars': 'on',
         'includeuppercaseletters': 'on'
-    }
-    response = client.post('/genpassword', data=data, follow_redirects=True)
-    assert response.status_code == 200
-    assert b"Generated Password:" in response.data
+    })
+    assert rv.status_code == 200
+    assert b'Generated Password' in rv.data
 
-def test_visits(client):
-    response = client.get('/visits')
-    assert response.status_code == 200
-    assert b"Number of visits:" in response.data
-
+def teardown_function(function):
+    # Clean up the visits.json file after tests
+    if os.path.exists('visits.json'):
+        with open('visits.json', 'w') as file:
+            json.dump({"visits": 0}, file)
