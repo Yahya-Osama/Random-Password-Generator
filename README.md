@@ -4,10 +4,12 @@ Random Password Generator is a simple web application built with Flask that gene
 
 ## Features
 
-- Generate random passwords of any length
+- Generate passwords with customizable length and character types
 - Include  numbers, special characters, and uppercase letters
 - Clean and intuitive user interface
-- Lightweight and easy to use
+- Dockerized application for easy deployment
+- Deployment automation with Ansible
+- Continuous integration and deployment using GitHub Actions
 
 ## Development
 
@@ -27,25 +29,54 @@ pip install pytest
     git clone https://github.com/Yahya-Osama/Random-Password-Generator.git
     ```
 
-2. Navigate to the project directory:
+2. Build and Run the Application with Docker Compose
+
+      Make sure you have Docker and Docker Compose installed on yoursystem. You can build and run the application using Docker Compose:
 
     ```bash
-    cd Random-Password-Generator
+    docker compose up --build
     ```
 
-3. Install the required dependencies:
+3. This will build the Docker images and start the application containers. The Flask application will be accessible at http://localhost:5000 and http://localhost:5001 for the second instance.
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+## Ansible Deployment
 
-4. Run the Flask application:
+    The project includes an Ansible playbook to automate the setup and deployment of the Flask application with Docker. The playbook performs the following tasks:
 
-    ```bash
-    python app.py
-    ```
+1. Install Docker and Docker Compose: Ensures that Docker and Docker Compose are installed on the target machine.
 
-5. Open your web browser and go to `http://localhost:5000` to access the Random Password Generator.
+2. Install Python and Dependencies: Installs Python, pip, and the Docker Python module.
+
+3. Copy Application Files: Copies the application files to the target machine.
+
+4. Build and Run Docker Containers: Uses Docker Compose to build and run the application containers.
+
+### Configuration
+
+1. Install ansible
+```bash
+pip install ansible
+```
+2. Setup Ansible Inventory:
+    - The inventory file hosts.ini specifies that the Ansible tasks should be run locally.
+3. Run the Ansible Playbook:
+```bash
+ansible-playbook -i hosts.ini playbook.yml
+```
+## GitHub Actions
+The project includes a GitHub Actions workflow for continuous integration and deployment. This workflow performs the following tasks:
+
+1. Testing:
+
+    Runs Python tests using pytest whenever changes are pushed to the main branch.
+
+2. Build and Push Docker Image:
+
+    Builds a Docker image and pushes it to Docker Hub upon successful tests.
+
+### Configuration
+
+Docker Hub Credentials: Store your Docker Hub credentials as GitHub Secrets with the name `DOCKERHUB_PASSWORD`.
 
 ## Usage
 
